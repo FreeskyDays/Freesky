@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void setupViewPager(ViewPager viewPager) {
             ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-            adapter.addFragment(new MapFragment(), "Map");
+            adapter.addFragment(new MapFreeFragment(), "Map");
             adapter.addFragment(new ChatFragment(), "Chat");
             adapter.addFragment(new DeviceFragment(), "Device");
             viewPager.setAdapter(adapter);
