@@ -2,6 +2,7 @@ package com.dgensolutions.freesky.freesky;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
+import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.dgensolutions.freesky.freesky.app.AppConfig;
 import com.dgensolutions.freesky.freesky.app.AppController;
 import com.dgensolutions.freesky.freesky.helper.SQLiteHandler;
@@ -26,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Created by Ganesh Kaple on 13-10-2016.
@@ -165,14 +170,10 @@ public class RegisterActivity extends AppCompatActivity {
                         // Inserting row in users table
                         db.addUser(name, email, uid, phone);
 
+
                         Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
-                        // Launch login activity
-                        Intent intent = new Intent(
-                                RegisterActivity.this,
-                                LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        appLozicLogin(uid,name,email);
                     } else {
 
                         // Error occurred in registration. Get the error
@@ -198,7 +199,8 @@ public class RegisterActivity extends AppCompatActivity {
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
             }
-        }) {
+        })
+        {
 
             @Override
             protected Map<String, String> getParams() {
@@ -215,7 +217,41 @@ public class RegisterActivity extends AppCompatActivity {
         };
 
         // Adding request to request queue
+
+
+
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void appLozicLogin(String uid, String name, String email) {
+        UserLoginTask.TaskListener listener = new UserLoginTask.TaskListener() {
+
+            @Override
+            public void onSuccess(RegistrationResponse registrationResponse, Context context) {
+                //After successful registration with Applozic server the callback will come here
+                // Launch login activity
+                Intent intent = new Intent(
+                        RegisterActivity.this,
+                        LoginActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+
+            @SuppressLint("LongLogTag")
+            @Override
+            public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+                //If any failure in registration the callback  will come here
+                Log.d(TAG,"Couldn't register to Applozic");
+            }};
+
+        User user = new User();
+        user.setUserId(uid); //userId it can be any unique user identifier
+        user.setDisplayName(name); //displayName is the name of the user which will be shown in chat messages
+        user.setEmail(email);//optional
+        user.setImageLink("");//optional,pass your image link
+        new UserLoginTask(user, listener, this).execute((Void) null);
+
     }
 
     private void showDialog() {

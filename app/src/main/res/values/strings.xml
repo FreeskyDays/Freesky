@@ -15,4 +15,8 @@
     <string name="welcome">Welcome</string>
     <string name="btn_logout">LOGOUT</string>
     <string name="name">Fullname</string>
+    <string name="default_media_location_folder">Freesky</string>
+    <string name="chat">Start Chatting</string>
+    <string name="chat_short">chat</string>
+
 </resources>

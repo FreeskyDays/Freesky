@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="applozic_api_key" templateMergeStrategy="preserve" translatable="false">
+        1bd52703b2a5089534e5fbddd1117863e
+    </string>
+</resources>

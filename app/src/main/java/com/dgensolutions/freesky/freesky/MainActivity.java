@@ -1,6 +1,7 @@
 package com.dgensolutions.freesky.freesky;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         private Toolbar toolbar;
         private TabLayout tabLayout;
+    boolean exit = false;
         private ViewPager viewPager;
     private int[] tabIcons = {R.drawable.ic_map_white_24dp,R.drawable.ic_chat_white_24dp,R.drawable.ic_watch_white_24dp};
 
@@ -87,4 +90,23 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         }
+
+    @Override
+    public void onBackPressed() {
+
+        if (exit) {
+            finish();
+        } else {
+            Toast.makeText(this, "Press Back again to Exit.", Toast.LENGTH_SHORT).show();
+            exit = true;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3000);
+        }
+
+    }
 }
