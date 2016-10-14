@@ -1,12 +1,10 @@
-package com.dgensolutions.freesky.freesky.activity;
+package com.dgensolutions.freesky.freesky;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.dgensolutions.freesky.freesky.R;
 
 /**
  * Created by Ganesh Kaple on 17-09-2016.
