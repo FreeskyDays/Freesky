@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.dgensolutions.freesky.freesky.helper.MyPreferenceManager;
 
 /**
  * Created by Ganesh Kaple on 13-10-2016.
@@ -17,6 +18,19 @@ public class AppController extends Application {
         private RequestQueue mRequestQueue;
 
         private static AppController mInstance;
+
+
+    private MyPreferenceManager pref;
+
+
+
+    public MyPreferenceManager getPrefManager() {
+        if (pref == null) {
+            pref = new MyPreferenceManager(this);
+        }
+
+        return pref;
+    }
 
         @Override
         public void onCreate() {
@@ -51,5 +65,6 @@ public class AppController extends Application {
                 mRequestQueue.cancelAll(tag);
             }
         }
+
 
 }

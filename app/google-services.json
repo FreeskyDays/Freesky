@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "616609294132",
+    "firebase_url": "https://rosy-slate-143905.firebaseio.com",
+    "project_id": "rosy-slate-143905",
+    "storage_bucket": "rosy-slate-143905.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616609294132:android:7fff78e32cb8e64b",
+        "android_client_info": {
+          "package_name": "com.dgensolutions.freesky.freesky"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "616609294132-dr8863vs8egpr5tb28jlrngpijad0bhk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQsctjrU47hPFHfiXGZN0QJEb-pXEbUcg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
