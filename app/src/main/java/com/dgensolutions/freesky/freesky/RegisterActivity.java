@@ -17,9 +17,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
+import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
+import com.applozic.mobicomkit.contact.AppContactService;
+import com.applozic.mobicommons.people.contact.Contact;
 import com.dgensolutions.freesky.freesky.app.AppConfig;
 import com.dgensolutions.freesky.freesky.app.AppController;
 import com.dgensolutions.freesky.freesky.helper.SQLiteHandler;
@@ -28,7 +32,9 @@ import com.dgensolutions.freesky.freesky.helper.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -173,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
-                        appLozicLogin(uid,name,email);
+                        appLozicLogin(uid,name,email, phone);
                     } else {
 
                         // Error occurred in registration. Get the error
@@ -223,13 +229,29 @@ public class RegisterActivity extends AppCompatActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void appLozicLogin(String uid, String name, String email) {
+    private void appLozicLogin(String uid, String name, String email, String phone) {
         UserLoginTask.TaskListener listener = new UserLoginTask.TaskListener() {
 
             @Override
             public void onSuccess(RegistrationResponse registrationResponse, Context context) {
                 //After successful registration with Applozic server the callback will come here
                 // Launch login activity
+                PushNotificationTask pushNotificationTask = null;
+                PushNotificationTask.TaskListener listener=  new PushNotificationTask.TaskListener() {
+                    @Override
+                    public void onSuccess(RegistrationResponse registrationResponse) {
+
+                    }
+                    @Override
+                    public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+
+                    }
+
+                };
+                pushNotificationTask = new PushNotificationTask(Applozic.getInstance(context).getDeviceRegistrationId(),listener,context);
+                pushNotificationTask.execute((Void)null);
+
+                buildContactData();
                 Intent intent = new Intent(
                         RegisterActivity.this,
                         LoginActivity.class);
@@ -237,6 +259,63 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
 
             }
+            private void buildContactData() {
+
+                Context context = getApplicationContext();
+                AppContactService appContactService = new AppContactService(context);
+                // avoid each time update ....
+                if (!appContactService.isContactExists("adarshk")) {
+
+                    List<Contact> contactList = new ArrayList<Contact>();
+                    //Adarsh....
+                    Contact contact = new Contact();
+                    contact.setUserId("adarshk");
+                    contact.setFullName("John");
+                    contact.setImageURL("R.drawable.couple");
+                    contactList.add(contact);
+
+                    Contact contactRaj = new Contact();
+                    contactRaj.setUserId("raj");
+                    contactRaj.setFullName("rajni");
+                    contactRaj.setImageURL("https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xap1/v/t1.0-1/p200x200/12049601_556630871166455_1647160929759032778_n.jpg?oh=7ab819fc614f202e144cecaad0eb696b&oe=56EBA555&__gda__=1457202000_85552414c5142830db00c1571cc50641");
+                    contactList.add(contactRaj);
+
+
+                    //Adarsh
+                    Contact contact2 = new Contact();
+                    contact2.setUserId("rathan");
+                    contact2.setFullName("Liz");
+                    contact2.setImageURL("R.drawable.liz");
+                    contactList.add(contact2);
+
+                    Contact contact3 = new Contact();
+                    contact3.setUserId("clem");
+                    contact3.setFullName("Clement");
+                    contact3.setImageURL("R.drawable.shivam");
+                    contactList.add(contact3);
+
+                    Contact contact4 = new Contact();
+                    contact4.setUserId("shanki.gupta");
+                    contact4.setFullName("Bill");
+                    contact4.setImageURL("R.drawable.contact_shanki");
+                    contactList.add(contact4);
+
+                    Contact contact6 = new Contact();
+                    contact6.setUserId("krishna");
+                    contact6.setFullName("Krishi");
+                    contact6.setImageURL("R.drawable.girl");
+                    contactList.add(contact6);
+
+                    Contact contact7 = new Contact();
+                    contact7.setUserId("heather");
+                    contact7.setFullName("Heather");
+                    contact7.setImageURL("R.drawable.heather");
+                    contactList.add(contact7);
+
+                    appContactService.addAll(contactList);
+                }
+            }
+
 
             @SuppressLint("LongLogTag")
             @Override
@@ -249,6 +328,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.setUserId(uid); //userId it can be any unique user identifier
         user.setDisplayName(name); //displayName is the name of the user which will be shown in chat messages
         user.setEmail(email);//optional
+        user.setContactNumber(phone);
         user.setImageLink("");//optional,pass your image link
         new UserLoginTask(user, listener, this).execute((Void) null);
 
