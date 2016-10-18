@@ -22,8 +22,6 @@ import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
-import com.applozic.mobicomkit.contact.AppContactService;
-import com.applozic.mobicommons.people.contact.Contact;
 import com.dgensolutions.freesky.freesky.app.AppConfig;
 import com.dgensolutions.freesky.freesky.app.AppController;
 import com.dgensolutions.freesky.freesky.helper.SQLiteHandler;
@@ -32,9 +30,7 @@ import com.dgensolutions.freesky.freesky.helper.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -251,69 +247,15 @@ public class RegisterActivity extends AppCompatActivity {
                 pushNotificationTask = new PushNotificationTask(Applozic.getInstance(context).getDeviceRegistrationId(),listener,context);
                 pushNotificationTask.execute((Void)null);
 
-                buildContactData();
+                //buildContactData();
+               // ApplozicSetting.getInstance(context).disableRegisteredUsersContactCall();
+
                 Intent intent = new Intent(
                         RegisterActivity.this,
                         LoginActivity.class);
                 startActivity(intent);
                 finish();
 
-            }
-            private void buildContactData() {
-
-                Context context = getApplicationContext();
-                AppContactService appContactService = new AppContactService(context);
-                // avoid each time update ....
-                if (!appContactService.isContactExists("adarshk")) {
-
-                    List<Contact> contactList = new ArrayList<Contact>();
-                    //Adarsh....
-                    Contact contact = new Contact();
-                    contact.setUserId("adarshk");
-                    contact.setFullName("John");
-                    contact.setImageURL("R.drawable.couple");
-                    contactList.add(contact);
-
-                    Contact contactRaj = new Contact();
-                    contactRaj.setUserId("raj");
-                    contactRaj.setFullName("rajni");
-                    contactRaj.setImageURL("https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xap1/v/t1.0-1/p200x200/12049601_556630871166455_1647160929759032778_n.jpg?oh=7ab819fc614f202e144cecaad0eb696b&oe=56EBA555&__gda__=1457202000_85552414c5142830db00c1571cc50641");
-                    contactList.add(contactRaj);
-
-
-                    //Adarsh
-                    Contact contact2 = new Contact();
-                    contact2.setUserId("rathan");
-                    contact2.setFullName("Liz");
-                    contact2.setImageURL("R.drawable.liz");
-                    contactList.add(contact2);
-
-                    Contact contact3 = new Contact();
-                    contact3.setUserId("clem");
-                    contact3.setFullName("Clement");
-                    contact3.setImageURL("R.drawable.shivam");
-                    contactList.add(contact3);
-
-                    Contact contact4 = new Contact();
-                    contact4.setUserId("shanki.gupta");
-                    contact4.setFullName("Bill");
-                    contact4.setImageURL("R.drawable.contact_shanki");
-                    contactList.add(contact4);
-
-                    Contact contact6 = new Contact();
-                    contact6.setUserId("krishna");
-                    contact6.setFullName("Krishi");
-                    contact6.setImageURL("R.drawable.girl");
-                    contactList.add(contact6);
-
-                    Contact contact7 = new Contact();
-                    contact7.setUserId("heather");
-                    contact7.setFullName("Heather");
-                    contact7.setImageURL("R.drawable.heather");
-                    contactList.add(contact7);
-
-                    appContactService.addAll(contactList);
-                }
             }
 
 
@@ -323,16 +265,21 @@ public class RegisterActivity extends AppCompatActivity {
                 //If any failure in registration the callback  will come here
                 Log.d(TAG,"Couldn't register to Applozic");
             }};
-
+        //user.setImageLink("");//optional,pass your image link
         User user = new User();
         user.setUserId(uid); //userId it can be any unique user identifier
         user.setDisplayName(name); //displayName is the name of the user which will be shown in chat messages
         user.setEmail(email);//optional
         user.setContactNumber(phone);
-        user.setImageLink("");//optional,pass your image link
         new UserLoginTask(user, listener, this).execute((Void) null);
 
+
+
+
+
     }
+
+
 
     private void showDialog() {
         if (!pDialog.isShowing())

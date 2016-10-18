@@ -1,9 +1,12 @@
 package com.dgensolutions.freesky.freesky;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -24,6 +27,7 @@ import com.applozic.mobicomkit.api.conversation.ApplozicMqttIntentService;
 import com.applozic.mobicomkit.api.conversation.Message;
 import com.applozic.mobicomkit.api.conversation.MobiComConversationService;
 import com.applozic.mobicomkit.broadcast.BroadcastService;
+import com.applozic.mobicomkit.contact.AppContactService;
 import com.applozic.mobicomkit.uiwidgets.conversation.ConversationUIService;
 import com.applozic.mobicomkit.uiwidgets.conversation.MessageCommunicator;
 import com.applozic.mobicomkit.uiwidgets.conversation.MobiComKitBroadcastReceiver;
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements MessageCommunicat
     private static int retry;
     public LinearLayout layout;
     public Snackbar snackbar;
+   // Context context;
     MobiComKitBroadcastReceiver mobiComKitBroadcastReceiver;
     ConversationUIService conversationUIService;
 
@@ -71,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements MessageCommunicat
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+       // context = this.getApplicationContext();
+       // ApplozicClient.getInstance(context).enableNotification();
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -79,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements MessageCommunicat
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
+        buildContactData();
 
         conversationUIService = new ConversationUIService(this, mobiComQuickConversationFragment);
         mobiComKitBroadcastReceiver = new MobiComKitBroadcastReceiver(this, mobiComQuickConversationFragment);
@@ -261,4 +270,45 @@ public class MainActivity extends AppCompatActivity implements MessageCommunicat
 
 
     }
+    public void buildContactData() {
+        int count = 0;
+        int flag = 0;
+        Context context = getApplicationContext();
+        AppContactService appContactService = new AppContactService(context);
+
+        Cursor phones = getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
+                null, null);
+        List<Contact> contactList = new ArrayList<Contact>();
+        Contact contact = new Contact();
+
+
+        while (phones.moveToNext()) {
+            count++;
+
+            String name = phones
+                    .getString(phones
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = phones
+                    .getString(phones
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            String userId = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
+
+            //TODO avoid each time update ....
+
+
+            contact.setUserId(userId);
+            contact.setFullName(name);
+            contact.setContactNumber(phoneNumber);
+            //contact.setImageURL(name);
+            contactList.add(contact);
+        }
+        appContactService.addAll(contactList);
+
+        Toast.makeText(getApplicationContext(), "Total contacts displayed" + count, Toast.LENGTH_SHORT).show();
+        flag = 1;
+
+    }
+
 }
