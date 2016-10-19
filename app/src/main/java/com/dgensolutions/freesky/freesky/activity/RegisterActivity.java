@@ -1,11 +1,10 @@
-package com.dgensolutions.freesky.freesky;
+package com.dgensolutions.freesky.freesky.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.dgensolutions.freesky.freesky.R;
 import com.dgensolutions.freesky.freesky.app.AppConfig;
 import com.dgensolutions.freesky.freesky.app.AppController;
 import com.dgensolutions.freesky.freesky.helper.SQLiteHandler;
@@ -32,75 +32,94 @@ import java.util.Map;
  * Created by Ganesh Kaple on 13-10-2016.
  */
 
-public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "com.dgensolutions.freesky.freesky.LoginActivity";
-    private Button btnLogin;
-    private Button btnLinkToRegister;
+public class RegisterActivity extends AppCompatActivity {
+    private static final String TAG = "com.dgensolutions.freesky.freesky.activity.RegisterActivity";
+    private Button btnRegister;
+    private Button btnLinkToLogin;
+    private EditText inputFullName;
     private EditText inputEmail;
+    private EditText inputPhone;
     private EditText inputPassword;
+    private EditText inputPasswordAgain;
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        inputFullName = (EditText) findViewById(R.id.name);
         inputEmail = (EditText) findViewById(R.id.email);
+        inputPhone = (EditText) findViewById(R.id.phone);
         inputPassword = (EditText) findViewById(R.id.password);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
+        inputPasswordAgain = (EditText) findViewById(R.id.password_again);
+        btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
 
-        // SQLite database handler
-        db = new SQLiteHandler(getApplicationContext());
-
         // Session manager
         session = new SessionManager(getApplicationContext());
+
+        // SQLite database handler
+        db = new SQLiteHandler(getApplicationContext());
 
         // Check if user is already logged in or not
         if (session.isLoggedIn()) {
             // User is already logged in. Take him to main activity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(RegisterActivity.this,
+                    MainActivity.class);
             startActivity(intent);
             finish();
         }
 
-        // Login button Click Event
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-
+        // Register Button Click event
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                String name = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+                String password_again = inputPasswordAgain.getText().toString().trim();
+                String phone = inputPhone.getText().toString().trim();
 
-                // Check for empty data in the form
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Enter email address!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Enter password!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!password.equals(password_again)) {
+                    Toast.makeText(RegisterActivity.this, "Password Doesn't Match!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                checkLogin(email,password);
-            }
+                if (password.length() < 6) {
+                    Toast.makeText(RegisterActivity.this, "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(phone.length() != 10) {
+                    Toast.makeText(RegisterActivity.this, "Phone Number is not valid", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                registerUser(name, email, phone, password);
+
+            }
         });
 
-        // Link to Register Screen
-        btnLinkToRegister.setOnClickListener(new View.OnClickListener() {
+        // Link to Login Screen
+        btnLinkToLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(),
-                        RegisterActivity.class);
+                        LoginActivity.class);
                 startActivity(i);
                 finish();
             }
@@ -109,36 +128,33 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * function to verify login details in mysql db
+     * Function to store user in MySQL database will post params(tag, name,
+     * email, password) to register url
      * */
-    private void checkLogin(final String email, final String password) {
+    private void registerUser(final String name, final String email,
+                              final String password, final String phone) {
         // Tag used to cancel the request
-        String tag_string_req = "req_login";
+        String tag_string_req = "req_register";
 
-        pDialog.setMessage("Logging in ...");
+        pDialog.setMessage("Registering ...");
         showDialog();
 
-
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
 
             @SuppressLint("LongLogTag")
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response);
+                Log.d(TAG, "Register Response: " + response);
                 hideDialog();
 
                 try {
                     JSONObject jObj = new JSONObject(response);
+
                     boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
                     if (!error) {
-                        // user successfully logged in
-                        // Create login session
-                        session.setLogin(true);
-
-                        // Now store the user in SQLite
+                        // User successfully stored in MySQL
+                        // Now store the user in sqlite
                         String uid = jObj.getString("uid");
 
                         JSONObject user = jObj.getJSONObject("user");
@@ -150,21 +166,26 @@ public class LoginActivity extends AppCompatActivity {
                         // Inserting row in users table
                         db.addUser(name, email, uid, phone);
 
-                        // Launch main activity
-                        Intent intent = new Intent(LoginActivity.this,
-                                MainActivity.class);
+                        Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
+
+                        // Launch login activity
+                        Intent intent = new Intent(
+                                RegisterActivity.this,
+                                LoginActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        // Error in login. Get the error message
+
+                        // Error occurred in registration. Get the error
+                        // message
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
-                    // JSON error
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),
+                            "" + e, Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -173,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
             @SuppressLint("LongLogTag")
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
+                Log.e(TAG, "Registration Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
@@ -182,9 +203,11 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             protected Map<String, String> getParams() {
-                // Posting parameters to login url
+                // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("name", name);
                 params.put("email", email);
+                params.put("phone", phone);
                 params.put("password", password);
 
                 return params;
@@ -193,7 +216,6 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         // Adding request to request queue
-        if (AppController.getInstance() != null)
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 

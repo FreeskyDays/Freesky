@@ -23,6 +23,9 @@ public class SessionManager {
 
     // Shared preferences file name
     private static final String PREF_NAME = "FreeskyLogin";
+    // All Shared Preferences Keys
+    private static final String KEY_IS_WAITING_FOR_SMS = "IsWaitingForSms";
+
 
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
 
@@ -45,4 +48,14 @@ public class SessionManager {
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
+
+    public void setIsWaitingForSms(boolean isWaiting) {
+        editor.putBoolean(KEY_IS_WAITING_FOR_SMS, isWaiting);
+        editor.commit();
+    }
+
+    public boolean isWaitingForSms() {
+        return pref.getBoolean(KEY_IS_WAITING_FOR_SMS, false);
+    }
+
 }

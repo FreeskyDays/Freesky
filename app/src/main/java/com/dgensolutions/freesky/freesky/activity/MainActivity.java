@@ -1,4 +1,4 @@
-package com.dgensolutions.freesky.freesky;
+package com.dgensolutions.freesky.freesky.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import com.dgensolutions.freesky.freesky.R;
 
 import java.util.ArrayList;
 import java.util.List;

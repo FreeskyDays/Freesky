@@ -1,4 +1,4 @@
-package com.dgensolutions.freesky.freesky;
+package com.dgensolutions.freesky.freesky.activity;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
