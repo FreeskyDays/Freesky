@@ -49,13 +49,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void setupViewPager(ViewPager viewPager) {
-            Fragment fragment;
-            if (DeviceFragment.isConnected) fragment = new DeviceConnectedFragment();
-            else fragment = new DeviceFragment();
             ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
             adapter.addFragment(new MapFreeFragment(), "Map");
             adapter.addFragment(new ChatFragment(), "Chat");
-            adapter.addFragment(fragment, "Device");
+            adapter.addFragment(new DeviceFragment(), "Device");
             viewPager.setAdapter(adapter);
         }
     private void setupTabIcons() {

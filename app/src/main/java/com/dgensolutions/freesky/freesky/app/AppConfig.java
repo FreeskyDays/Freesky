@@ -11,9 +11,13 @@ public class AppConfig {
     // Server user register url
     public static String URL_REGISTER = "http://192.168.43.52/freesky/register.php";
 
+    // Server user register url
+    public static String URL_VERIFY_OTP = "http://192.168.43.52/freesky/verify_otp.php";
+
+
     // server URL configuration
-    public static final String URL_REQUEST_SMS = "http://192.168.43.52/freesky/request_sms.php";
-    public static final String URL_VERIFY_OTP = "http://192.168.43.52/freesky/verify_otp.php";
+    //public static final String URL_REQUEST_SMS = "http://192.168.43.52/freesky/request_sms.php";
+    //public static final String URL_VERIFY_OTP = "http://192.168.43.52/freesky/verify_otp.php";
 
     // SMS provider identification
     // It should match with your SMS gateway origin

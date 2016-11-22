@@ -2,10 +2,15 @@ package com.dgensolutions.freesky.freesky.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +30,11 @@ import com.dgensolutions.freesky.freesky.helper.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Created by Ganesh Kaple on 13-10-2016.
@@ -42,13 +50,36 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText inputPassword;
     private EditText inputPasswordAgain;
     private ProgressDialog pDialog;
-    private SessionManager session;
+    public static SessionManager session;
     private SQLiteHandler db;
+    Context context;
+
+    public static final String INTENT_PHONENUMBER = "phonenumber";
+    public static final String INTENT_COUNTRY_CODE = "code";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        context = getApplicationContext();
+
+        MessageDigest md = null;
+        try {
+
+            PackageInfo info = context.getPackageManager().getPackageInfo(
+                    context.getPackageName(),
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+        Log.i("SecretKey = ", Base64.encodeToString(md.digest(), Base64.DEFAULT));
 
         inputFullName = (EditText) findViewById(R.id.name);
         inputEmail = (EditText) findViewById(R.id.email);
@@ -127,12 +158,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+
+
     /**
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
      * */
     private void registerUser(final String name, final String email,
-                              final String password, final String phone) {
+                              final String phone, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
 
@@ -149,6 +182,11 @@ public class RegisterActivity extends AppCompatActivity {
                 hideDialog();
 
                 try {
+
+                    // user successfully logged in
+                    // Create login session
+
+
                     JSONObject jObj = new JSONObject(response);
 
                     boolean error = jObj.getBoolean("error");
@@ -157,9 +195,14 @@ public class RegisterActivity extends AppCompatActivity {
                         // Now store the user in sqlite
                         String uid = jObj.getString("uid");
 
+
                         JSONObject user = jObj.getJSONObject("user");
                         String name = user.getString("name");
                         String email = user.getString("email");
+
+                        // Now store the user in SQLite
+
+
                         String phone = user
                                 .getString("phone");
 
@@ -168,16 +211,23 @@ public class RegisterActivity extends AppCompatActivity {
 
                         Toast.makeText(getApplicationContext(), "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
+                        //session.setLogin(true);
+
+                        Intent verification = new Intent(RegisterActivity.this, VerificationActivity.class);
+                        verification.putExtra(INTENT_PHONENUMBER, phone);
+                        verification.putExtra(INTENT_COUNTRY_CODE, "91");
+                        startActivity(verification);
                         // Launch login activity
-                        Intent intent = new Intent(
+                        /*Intent intent = new Intent(
                                 RegisterActivity.this,
                                 LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        startActivity(intent); */
+                        //finish();
                     } else {
 
                         // Error occurred in registration. Get the error
                         // message
+                        session.setLogin(false);
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();

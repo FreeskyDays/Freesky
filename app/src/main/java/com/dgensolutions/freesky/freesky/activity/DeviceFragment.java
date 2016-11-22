@@ -66,51 +66,45 @@ public class DeviceFragment extends Fragment {
             mStatustextView.setText("Connecting...");
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
+            if (info.equals(R.string.none_paired)) {
+                Toast.makeText(getContext(),getResources().getText(R.string.none_paired).toString(), Toast.LENGTH_SHORT);
+            }
 
-            if (info.length() >18)    Macaddress = info.substring(info.length() - 17);
-            else Macaddress = info;
+            else {
+                if (info.length() > 18) Macaddress = info.substring(info.length() - 17);
+                else Macaddress = info;
 
-            // Make an intent to start next activity while taking an extra which is the MAC address.
-            //Intent i = new Intent(DeviceListActivity.this, sendReceiveActivity.class);
-            //i.putExtra(EXTRA_DEVICE_ADDRESS, address);
-            //startActivity(i);
-            isConnected = true;
-            Bundle bundle = new Bundle();
-            bundle.putString(EXTRA_DEVICE_ADDRESS, Macaddress);
-            fragmentConnected.setArguments(bundle);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction().addToBackStack(null);
-            transaction.replace(R.id.device_list, fragmentConnected);
-            transaction.commit();
-
+                // Make an intent to start next activity while taking an extra which is the MAC address.
+                //Intent i = new Intent(DeviceListActivity.this, sendReceiveActivity.class);
+                //i.putExtra(EXTRA_DEVICE_ADDRESS, address);
+                //startActivity(i);
+                isConnected = true;
+                Bundle bundle = new Bundle();
+                bundle.putString(EXTRA_DEVICE_ADDRESS, Macaddress);
+                fragmentConnected.setArguments(bundle);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction().addToBackStack(null);
+                transaction.replace(R.id.device_list, fragmentConnected);
+                transaction.commit();
+            }
         }
     };
-
-
         @Override
         public void onResume () {
             super.onResume();
-
             checkBTState();
-
-
             mStatustextView = (TextView) view.findViewById(R.id.connecting);
             mStatustextView.setTextSize(40);
             mStatustextView.setText(" ");
-
             // Initialize array adapter for paired devices
             mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this.getActivity(), R.layout.device_name);
-
             // Find and set up the ListView for paired devices
             ListView pairedListView = (ListView) view.findViewById(R.id.paired_devices);
             pairedListView.setAdapter(mPairedDevicesArrayAdapter);
             pairedListView.setOnItemClickListener(mDeviceClickListener);
-
             // Get the local Bluetooth adapter
             mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-
             // Get a set of currently paired devices and append to 'pairedDevices'
             Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-
             // Add previosuly paired devices to the array
             if (pairedDevices.size() > 0) {
                 getActivity().findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);//make title viewable
@@ -121,11 +115,7 @@ public class DeviceFragment extends Fragment {
                 String noDevices = getResources().getText(R.string.none_paired).toString();
                 mPairedDevicesArrayAdapter.add(noDevices); // No Device No Connection
                 // Set up on-click listener for the list (nicked this - unsure)
-
-
             }
-
-
         }
 
     private void checkBTState() {
@@ -140,7 +130,6 @@ public class DeviceFragment extends Fragment {
                 //Prompt user to turn on Bluetooth
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, 1);
-
             }
         }
     }

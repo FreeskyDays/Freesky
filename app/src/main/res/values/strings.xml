@@ -16,17 +16,23 @@
     <string name="btn_logout">LOGOUT</string>
     <string name="name">Fullname</string>
     <string name="none_paired">No Paired Device</string>
-<string name="title_activity_sms">SmsActivity</string>
-<string name="action_logout">Logout</string>
-<string name="msg_enter_mobile">Enter your mobile number to get started!</string>
-<string name="lbl_name">Name</string>
-<string name="lbl_email">Email</string>
-<string name="lbl_mobile">Mobile</string>
-<string name="lbl_next">NEXT</string>
-<string name="msg_sit_back">Sit back &amp; Relax! while we verify your mobile number</string>
-<string name="msg_manual_otp">(Enter the OTP below in case if we fail to detect the SMS automatically)</string>
-<string name="lbl_enter_otp">Enter OTP</string>
-<string name="lbl_submit">SUBMIT</string>
+    <string name="title_activity_sms">SmsActivity</string>
+    <string name="action_logout">Logout</string>
+    <string name="msg_enter_mobile">Enter your mobile number to get started!</string>
+    <string name="lbl_name">Name</string>
+    <string name="lbl_email">Email</string>
+    <string name="lbl_mobile">Mobile</string>
+    <string name="lbl_next">NEXT</string>
+    <string name="msg_sit_back">Sit back &amp; Relax! while we verify your mobile number</string>
+    <string name="msg_manual_otp">(Enter the OTP below in case if we fail to detect the SMS automatically)</string>
+    <string name="lbl_enter_otp">Enter OTP</string>
+    <string name="lbl_submit">SUBMIT</string>
+    <string name="sending_sms">We\'re sending an sms to</string>
+    <string name="inprogress">Verification in\nprogress</string>
+    <string name="verified">Verification successful</string>
+    <string name="failed">Verification failed</string>
+    <string name="entercode">Please enter the code you received</string>
+
 
 
 </resources>
