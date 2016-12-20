@@ -1,13 +1,38 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="three"
+        android:text="Connected"
         android:textSize="40dp"
         android:textStyle="bold"
         android:layout_centerInParent="true"/>
 
-</RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connected"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/button_off"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="LED OFF"
+    android:textSize="40dp"
+    android:textStyle="bold"
+    android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/button_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LED ON"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        android:layout_centerInParent="true"/>
+</LinearLayout>

@@ -76,6 +76,8 @@
               android:layout_alignWithParentIfMissing="true"
               android:fontFamily="sans-serif-light"
               android:singleLine="true"
+        android:checkMark="@drawable/list_tem_selector"
+        android:checked="false"
         android:textAppearance="?android:attr/textAppearanceSmall"
         tools:ignore="RtlHardcoded" />
 

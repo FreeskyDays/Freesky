@@ -105,6 +105,7 @@ public class ContactsListFragment extends ListFragment implements LoaderManager.
     // Contact selected listener that allows the activity holding this fragment to be notified of
     // a contact being selected
     private OnContactsInteractionListener mOnContactSelectedListener;
+    private int count_contacts = 0;
 
     // Stores the previously selected search item so that on a configuration change the same item
     // can be reselected again
@@ -212,8 +213,28 @@ public class ContactsListFragment extends ListFragment implements LoaderManager.
 
                 // selected item
                 CheckedTextView selected = (CheckedTextView) v.findViewById(android.R.id.text1);
-                selected.setChecked(true);
-                selected.setCheckMarkDrawable(R.drawable.list_tem_selector);
+               // selected.setChecked(true);
+               // selected.setCheckMarkDrawable(R.drawable.list_tem_selector);
+
+                if (count_contacts< 5) {
+                    if (selected.isChecked() == true) {
+                        selected.setChecked(false);
+                        count_contacts++;
+
+                    } else {
+                        selected.setChecked(true);
+                        count_contacts--;
+                    }
+                }
+                else {
+
+                    Toast.makeText(getActivity(), "You cannot select more than 5 favourite contacts.", Toast.LENGTH_SHORT).show();
+
+                }
+
+
+
+
 
 
                 // Creates a contact lookup Uri from contact ID and lookup_key

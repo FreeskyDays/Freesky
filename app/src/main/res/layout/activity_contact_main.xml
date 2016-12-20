@@ -19,8 +19,31 @@
      displays a list of contacts. Tapping on a contact will start a new activity to display the
      contact details. -->
 
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:text="Select your Trusted Contacts"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </android.support.design.widget.AppBarLayout>
+
+
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     android:name="com.dgensolutions.freesky.freesky.activity.ContactsListFragment"
     android:id="@+id/contact_list"
     android:layout_height="match_parent"
     android:layout_width="match_parent"/>
+</android.support.design.widget.CoordinatorLayout>

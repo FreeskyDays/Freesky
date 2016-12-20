@@ -9,10 +9,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dgensolutions.freesky.freesky.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,12 +33,11 @@ public class DeviceConnectedFragment extends Fragment {
 
         public static final String TAG = "com.dgensolutions.freesky.freesky.deviceconnectedfragment";
         Button btnOn, btnOff;
+        View view;
         TextView txtArduino, txtString, txtStringLength, sensorView;
         Handler bluetoothIn;
         int flag;//little hack
         int dataLength;//hack
-
-
         final int handlerState = 0;                        //used to identify handler message
         private BluetoothAdapter btAdapter = null;
         private BluetoothSocket btSocket = null;
@@ -55,7 +58,7 @@ public class DeviceConnectedFragment extends Fragment {
                 address = savedInstanceState.getString(DeviceFragment.EXTRA_DEVICE_ADDRESS);
             }
             else address = DeviceFragment.Macaddress;
-            intializeDevice();
+            initializeDevice();
 
             btAdapter = BluetoothAdapter.getDefaultAdapter();       // get Bluetooth adapter
             checkBTState();
@@ -63,7 +66,7 @@ public class DeviceConnectedFragment extends Fragment {
 
 
             // Set up onClick listeners for buttons to send 1 or 0 to turn on/off LED
-            btnOff.setOnClickListener(new View.OnClickListener() {
+            /*btnOff.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mConnectedThread.write("0");    // Send "0" via Bluetooth
                     Toast.makeText(getContext(), "Turn off LED", Toast.LENGTH_SHORT).show();
@@ -75,10 +78,24 @@ public class DeviceConnectedFragment extends Fragment {
                     mConnectedThread.write("1");    // Send "1" via Bluetooth
                     Toast.makeText(getContext(), "Turn on LED", Toast.LENGTH_SHORT).show();
                 }
-            });
+            }); */
         }
 
-    private void intializeDevice() {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
+
+        view = inflater.inflate(R.layout.device_list, container, false);
+        return view;
+    }
+    public DeviceConnectedFragment() {
+        // Required empty public constructor
+    }
+
+
+    private void initializeDevice() {
         String response;
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
@@ -93,12 +110,24 @@ public class DeviceConnectedFragment extends Fragment {
             String date = "," + calendar.get(Calendar.DAY_OF_MONTH) + "," + calendar.get(Calendar.MONTH) + "," + calendar.get(Calendar.YEAR) + ":";
 */
 
-        mConnectedThread.write(time);//Calendar calendar = new GregorianCalendar();
-        response= readData();
-        if (response.equals("ok")) mConnectedThread.write(date);
-        else mConnectedThread.write("not ok");
+        setupStream();
+        sendDate(time, date);
 
     }
+
+    private void sendDate(String time, String date) {
+        String response;
+        if (mConnectedThread != null) {
+            mConnectedThread.write(time);//Calendar calendar = new GregorianCalendar();
+            response = readData();
+            if (response.equals("ok")) mConnectedThread.write(date);
+            else mConnectedThread.write("not ok");
+        }
+        else {
+            Toast.makeText(getContext(),"thread not ready", Toast.LENGTH_SHORT);
+        }
+    }
+
     private String readData() {
         flag = -1;
         bluetoothIn = new Handler() {
@@ -143,8 +172,17 @@ public class DeviceConnectedFragment extends Fragment {
 
             //Get the MAC address from the DeviceListActivty via EXTRA
   //          address = intent.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+            setupStream();
 
-            //create device and set the MAC address
+
+        }
+
+    protected void setupStream() {
+        //create device and set the MAC address
+        if (btAdapter == null) {
+            Toast.makeText(getContext(),"Adapter not set" ,Toast.LENGTH_SHORT);
+        }
+        else {
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
 
             try {
@@ -169,8 +207,9 @@ public class DeviceConnectedFragment extends Fragment {
             //If it is not an exception will be thrown in the write method and finish() will be called
             mConnectedThread.write("x");
         }
+    }
 
-        @Override
+    @Override
         public void onPause() {
             super.onPause();
             try {
@@ -236,8 +275,14 @@ public class DeviceConnectedFragment extends Fragment {
                             @Override
                             public void run() {
                                 //sensorView.setText(readMessage);
-                                bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
-                            }
+                                if (bluetoothIn != null) {
+                                    bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
+
+                                }
+                                else {
+                                    Log.d(TAG,"blutooth in is null");
+                                }
+                                     }
                         });
 
                     } catch (IOException e) {

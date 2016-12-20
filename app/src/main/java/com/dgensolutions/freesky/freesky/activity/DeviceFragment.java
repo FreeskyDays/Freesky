@@ -79,8 +79,10 @@ public class DeviceFragment extends Fragment {
                 //i.putExtra(EXTRA_DEVICE_ADDRESS, address);
                 //startActivity(i);
                 isConnected = true;
+
                 Bundle bundle = new Bundle();
                 bundle.putString(EXTRA_DEVICE_ADDRESS, Macaddress);
+                fragmentConnected = new DeviceConnectedFragment();
                 fragmentConnected.setArguments(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction().addToBackStack(null);
                 transaction.replace(R.id.device_list, fragmentConnected);
